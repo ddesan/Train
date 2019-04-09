@@ -1,4 +1,7 @@
+// ----------------------------------------------------------------------
 // INITIALIZE FIREBASE
+// ----------------------------------------------------------------------
+
 var config = {
     apiKey: "AIzaSyDhiVP9nWVVVDSAcq4g29cYGfhJWdDvrOE",
     authDomain: "train-station-20ca1.firebaseapp.com",
@@ -38,13 +41,20 @@ var frequency = "";;
         firstTrain = $("#first-train-input").val().trim();
         frequency = $("#frequency-input").val().trim();
 
-        // Change in Firebase
-        database.ref().set({
+        // Push it to the data base in Firebase
+        database.ref().push({
             trainName: trainName,
             destination: destination,
             firstTrain: firstTrain,
             frequency: frequency,
         })
+
+        // Clear input fields
+        $("#train-name-input").val("");
+        $("#destination-input").val("");
+        $("#first-train-input").val("");
+        $("#frequency-input").val("");
+
     });
 
     // Validate changes in Firebase
@@ -54,6 +64,32 @@ var frequency = "";;
     })
 
 // 2. We need to show the information the user entry in the dashboard
+
+    database.ref().on("child_added", function(childSnapshot) {
+        
+        // Store in a variable
+         var dbTrainName = childSnapshot.val().trainName;
+         var dbDesInput = childSnapshot.val().destination;
+         var dbFirstTrainName = childSnapshot.val().firstTrain;
+         var dbFrequencyInput = childSnapshot.val().frequency;
+
+            console.log(dbTrainName);
+            console.log(dbDesInput);
+            console.log(dbFirstTrainName);
+            console.log(dbFrequencyInput);
+
+        // Create the new row
+        var newRow = $("<tr>").append(
+            $("<td>").text(dbTrainName),
+            $("<td>").text(dbDesInput),
+            $("<td>").text(dbFirstTrainName),
+            $("<td>").text(dbFrequencyInput),
+        );
+
+        // Append the new row to the table
+        $("#train-table > tbody").append(newRow);
+    });
+
 
 // ----------------------------------------------------------------------
 // Main Process
